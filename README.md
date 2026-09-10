@@ -2,6 +2,10 @@
 
 Aplicativo desenvolvido em Python para realizar limpeza e diagnóstico do Windows de forma simples e rápida.
 
+> **Atenção:** este aplicativo apaga permanentemente arquivos temporários, o cache do Windows Update, arquivos do Prefetch e o conteúdo da Lixeira. Confirme os arquivos antes de executar a limpeza e use-o apenas em computadores sob sua responsabilidade.
+
+O MegaCleaner é destinado ao Windows. Algumas ações podem exigir execução com privilégios de administrador.
+
 ## Funcionalidades
 
 - Limpeza de arquivos temporários
@@ -38,4 +42,4 @@ python mega_promo_cleaner.py
 
 ## Licença
 
-Projeto desenvolvido para estudos e uso interno.
+Projeto desenvolvido para estudos e uso interno. Nenhuma licença de reutilização foi definida atualmente.

@@ -171,20 +171,26 @@ def limpar_prefetch():
 def esvaziar_lixeira():
     try:
         # Tentar usar o comando nativo do Windows
-        subprocess.run(
+        resultado = subprocess.run(
             ["cmd", "/c", "rd /s /q %systemdrive%\\$Recycle.bin"],
-            shell=True,
+            shell=False,
             capture_output=True,
             timeout=10
         )
 
+        if resultado.returncode != 0:
+            raise RuntimeError("O comando do Windows falhou.")
+
         # Recriar a pasta de lixeira
-        subprocess.run(
+        resultado = subprocess.run(
             ["cmd", "/c", "attrib +s +h %systemdrive%\\$Recycle.bin"],
-            shell=True,
+            shell=False,
             capture_output=True,
             timeout=5
         )
+
+        if resultado.returncode != 0:
+            raise RuntimeError("Não foi possível recriar a Lixeira.")
 
         return True
 
@@ -193,8 +199,14 @@ def esvaziar_lixeira():
         try:
             # Fallback alternativo
             subprocess.run(
-                "powershell -Command \"Clear-RecycleBin -Force -Confirm:$false\"",
-                shell=True,
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-NonInteractive",
+                    "-Command",
+                    "Clear-RecycleBin -Force -Confirm:$false",
+                ],
+                shell=False,
                 capture_output=True,
                 timeout=10
             )
@@ -222,6 +234,17 @@ def atualizar_info():
 
 
 def limpar_temp():
+    confirmado = messagebox.askyesno(
+        "Confirmar limpeza",
+        "Esta ação apagará arquivos temporários, o cache do Windows Update, o Prefetch e a Lixeira.\n\n"
+        "Os arquivos removidos não poderão ser recuperados. Deseja continuar?",
+        icon="warning",
+    )
+
+    if not confirmado:
+        status.config(text="Limpeza cancelada.")
+        return
+
     progress["value"] = 0
 
     status.config(
@@ -269,6 +292,15 @@ def limpar_temp():
 
 
 def limpar_lixeira():
+    confirmado = messagebox.askyesno(
+        "Confirmar limpeza da Lixeira",
+        "A Lixeira será esvaziada permanentemente. Deseja continuar?",
+        icon="warning",
+    )
+
+    if not confirmado:
+        return
+
     if esvaziar_lixeira():
 
         messagebox.showinfo(
